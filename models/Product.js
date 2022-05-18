@@ -11,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
     },{
         timestamps: true,
         paranoid : true
-    });
+    });    
     
     return Product;
-}
+}jnkjkjnkjnjnjkn
