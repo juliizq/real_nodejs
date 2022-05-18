@@ -14,4 +14,4 @@ module.exports = (sequelize, Sequelize) => {
     });    
     
     return Product;
-}jnkjkjnkjnjnjkn
+}
