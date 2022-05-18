@@ -2,8 +2,7 @@ module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define('User', {
         username : {
             type : Sequelize.TEXT,
-            allowNull : false,
-            unique : true
+            allowNull : false
         },
         password : {
             type : Sequelize.TEXT,

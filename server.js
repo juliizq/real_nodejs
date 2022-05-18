@@ -1,7 +1,8 @@
+require("./models");
+require("dotenv").config();
+
 const express = require('express');
 const app = express();
-
-require("dotenv").config();
 
 app.use(express.json());
 
