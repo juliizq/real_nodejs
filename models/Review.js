@@ -10,14 +10,15 @@ module.exports = (sequelize, Sequelize) => {
         // },
         rating :  {
             type : Sequelize.INTEGER,
-            allowNull : false,
-            field: 'first_name'
+            allowNull : false
         }, 
         weight : {
-            type : Sequelize.STRING
+            type : Sequelize.INTEGER,
+            allowNull : false
         },
         height : {
-            type : Sequelize.STRING
+            type : Sequelize.INTEGER,
+            allowNull : false
         },
     },{
         timestamps: true,

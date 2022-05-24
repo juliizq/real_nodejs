@@ -20,7 +20,7 @@ const db  = {
   Review : reviewModel(sequelize, DataTypes)
 }
 
-//Relaciones
+//Associations
 
 // One to many
 

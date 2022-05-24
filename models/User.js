@@ -1,12 +1,12 @@
 module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define('User', {
-        username : {
-            type : Sequelize.TEXT,
-            allowNull : false
+        email : {
+            type: Sequelize.STRING,
+            allowNull: false
         },
         password : {
             type : Sequelize.TEXT,
-            allowNull : false
+            allowNull: false
         },
         firstName :  {
             type : Sequelize.STRING,
@@ -21,6 +21,7 @@ module.exports = (sequelize, Sequelize) => {
         role: {
             type: Sequelize.ENUM(
                 'USER',
+                'MODERATOR',
                 'ADMIN'
             ),
             allowNull: false,
@@ -28,11 +29,15 @@ module.exports = (sequelize, Sequelize) => {
         },
         country : {
             type : Sequelize.STRING,
-            allowNull : false,
+            allowNull : false
         },
         city : {
             type : Sequelize.STRING,
-            allowNull : false,
+            allowNull : false
+        },
+        refreshToken : {
+            type : Sequelize.TEXT,
+            allowNull : true
         }
     },{
         timestamps: true,
