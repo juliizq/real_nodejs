@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const db = require('../models');
-const { registerValidation, loginValidation } = require('../validations/auth.validations');
+const {loginValidation } = require('../validations/auth.validations');
 const saltRound = +process.env.SALT_ROUND || 10;
 require('dotenv').config();
 
