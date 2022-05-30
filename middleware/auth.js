@@ -21,8 +21,13 @@ module.exports = {
             const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
             const user = await db.User.findOne({ where : { id : decoded.userId }});
+            const role = await db.User.findOne({where : { role : decoded.role}})
 
             if(!user){
+                return res.status(401).json({ error : 'UNAUTHORIZE'});
+            }
+            
+            if(!role){
                 return res.status(401).json({ error : 'UNAUTHORIZE'});
             }
 
