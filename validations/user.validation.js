@@ -31,37 +31,26 @@ const createUser = Joi.object({
 
 });
 
-// const updateUser =  Joi.object({
-//     fullname:Joi.string()
-//         .min(3)
-//         .max(30),
+const updateUser =  Joi.object({
+    firstName: Joi.string()
+        .min(2)
+        .max(30)
+        .required(),
 
-//     password: Joi.string()
-//         .min(3)
-//         .max(30),
+    lastName: Joi.string()
+        .max(30)
+        .required(),
 
-//     email: Joi.string()
-//         .email(),
+    country : Joi.string()
+            .required(),
 
-//     role :  Joi.string()
-//         .valid('USER', 'ADMIN'),
-// });
+    city : Joi.string()
+        .required()
+
+});
     
-// const partialUpdate = Joi.object({
-//     fullname:Joi.string()
-//         .min(3)
-//         .max(30),
-
-//     password: Joi.string()
-//         .min(3)
-//         .max(30),
-
-//     email: Joi.string()
-//         .email()
-// })
 
 module.exports = {
-    createUser
-    // updateUser,
-    // partialUpdate
+    createUser,
+    updateUser
 }
