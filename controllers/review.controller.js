@@ -18,7 +18,7 @@ module.exports = {
             const validation = createReview.validate(req.body);
 
         if(validation.error){
-            return res.status(400).json(validation.error)
+            return res.sendStatus(400).json(validation.error)
         }
 
         const review = {
@@ -36,7 +36,7 @@ module.exports = {
             if(error.name === 'ValidationError'){
               return res.status(400).json({errors : error.details});
             }
-            return res.status(500).json('Something wrong happened');
+            return res.sendStatus(500).json('Something wrong happened');
 
         }
 

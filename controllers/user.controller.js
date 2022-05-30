@@ -1,7 +1,9 @@
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const { exist } = require('joi');
-const { createUser} = require('../validations/user.validation');
+const { createUser, updateUser } = require('../validations/user.validation');
+const { User } = require('../models');
+const req = require('express/lib/request');
 const saltRound  = +process.env.SALT_ROUND || 10;
 
 
@@ -23,7 +25,7 @@ module.exports = {
             const validation = createUser.validate(req.body);
 
             if(validation.error){
-                return res.status(400).json(validation.error)
+                return res.sendStatus(400).json(validation.error)
             }
 
             const exist = await db.User.findOne({ where : { email : req.body.email}})
@@ -56,5 +58,53 @@ module.exports = {
           } 
     },
 
+    async update (req, res) {
+        try {
+            const id = req.params.id;
+      
+            const exist = await db.User.findOne({ where : { id : id }});
 
-}
+            if(!exist){
+              return res.status(404).json('Not found');
+            }
+
+            const validation = updateUser.validate(req.body);
+            if(validation.error){
+                return res.status(400).json(validation.error)
+            }
+
+            const user = Object.assign(exist,req.body);
+            await user.save();
+      
+            return res.status(200).json(user);
+
+        }catch(error){
+
+            console.log('error:', error)
+            if(error.name === 'ValidationError'){
+              return res.status(400).json({errors : error.details});
+            }
+            return res.status(500).json('Something wrong happened');
+        }
+        
+    },
+
+    async delete(req,res){
+        try {
+            const id = req.params.id;
+
+            const exist = await db.User.findOne({ where : { id : id }});
+            if(!exist){
+                return res.status(404).json({ error : 'Not found'});
+            }
+
+            await exist.destroy();
+
+            return res.status(200).json({ meessage : 'User deleted!'});
+        } catch (err) {
+            console.log('err:', err)
+            return res.status(500).json('Something wrong happened');
+        }
+    }
+
+} 

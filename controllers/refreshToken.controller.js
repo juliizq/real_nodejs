@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const db = require('../models');
-const {loginValidation } = require('../validations/auth.validations');
-const saltRound = +process.env.SALT_ROUND || 10;
 require('dotenv').config();
+
 
 module.exports = {
     
@@ -13,19 +12,11 @@ module.exports = {
 
             const cookies = req.cookies;
 
-            if(!cookies.jwt){
-                return res.status(401)
+            if(!cookies?.jwt){
+                return res.sendStatus(401)
             }
 
-            console.log(cookies.jwt);
-
-            var refreshToken = cookies.jwt;
-
-
-            const validation = loginValidation.validate(req.body);
-            if(validation.error){
-                return res.status(400).json(validation.error)
-            }
+            const refreshToken = cookies.jwt;
             
             // Get user by email
             const user = await db.User.findOne({ where : { refreshToken : req.body.refreshToken}});
@@ -40,23 +31,27 @@ module.exports = {
                 process.env.REFRESH_TOKEN_SECRET,
                 (err, decoded) => {
                     if (err || user.firstName != decoded.firstName) {
-                        return res.status(403)
+                        return res.sendStatus(403)
                     }
 
                     const accessToken = jwt.sign(
-                        { "firstName" : decoded.firstName},
+                        {
+                            'UserInfo': {
+                                'userId': user.id,
+                                'firstName': decoded.firstName,
+                                'role': role
+                            }
+                        },
                         process.env.ACCESS_TOKEN_SECRET,
                         { expiresIn : '5m'}
                     );
+
                     res.json({ accessToken })
                 }
             )
 
         } catch (err) {
             res.status(400).json(err)
-        }
-        
-        return User;
-       
+        }  
     }
 }
