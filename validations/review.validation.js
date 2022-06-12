@@ -18,7 +18,16 @@ const createReview = Joi.object({
 
 });
 
+const getReviews =  Joi.object({
+    categoryId: Joi.number().min(1),
+    productId: Joi.number().min(1),
+    page: Joi.number().min(1),
+    size: Joi.number(),
+}).options({ allowUnknown : false})
+
+
 
 module.exports = {
-    createReview
+    createReview,
+    getReviews
 }
