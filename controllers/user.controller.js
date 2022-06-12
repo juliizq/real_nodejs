@@ -1,9 +1,6 @@
 const db = require('../models');
 const bcrypt = require('bcrypt');
-const { exist } = require('joi');
-const { createUser, updateUser } = require('../validations/user.validation');
-const { User } = require('../models');
-const req = require('express/lib/request');
+const { createUser, updateUser, patchUser } = require('../validations/user.validation');
 const saltRound  = +process.env.SALT_ROUND || 10;
 
 
@@ -14,7 +11,7 @@ module.exports = {
             .then((data) => {
                 res.json(data)
             }).catch((err) =>{
-                res.status(400).json(err)
+                res.status(500).json(err)
             })
     },
 
@@ -25,7 +22,7 @@ module.exports = {
             const validation = createUser.validate(req.body);
 
             if(validation.error){
-                return res.sendStatus(400).json(validation.error)
+                return res.status(400).json(validation.error)
             }
 
             const exist = await db.User.findOne({ where : { email : req.body.email}})
@@ -58,7 +55,7 @@ module.exports = {
           } 
     },
 
-    async update (req, res) {
+    async update(req, res) {
         try {
             const id = req.params.id;
       
@@ -69,6 +66,41 @@ module.exports = {
             }
 
             const validation = updateUser.validate(req.body);
+            if(validation.error){
+                return res.status(400).json(validation.error)
+            }
+
+            const user = Object.assign(exist,req.body);
+            await user.save();
+      
+            return res.status(200).json(user);
+
+        }catch(error){
+
+            console.log('error:', error)
+            if(error.name === 'ValidationError'){
+              return res.status(400).json({errors : error.details});
+            }
+            return res.status(500).json('Something wrong happened');
+        }
+        
+    },
+
+    async patch(req, res) {
+        try {
+            const id = req.params.id;
+      
+            const exist = await db.User.findOne({ where : { id : id }});
+
+            if(!exist){
+              return res.status(404).json('Not found');
+            }
+
+            if(exist.id != req.user.userId){
+                return res.sendStatus(403);
+            }
+
+            const validation = patchUser.validate(req.body);
             if(validation.error){
                 return res.status(400).json(validation.error)
             }

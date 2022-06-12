@@ -20,7 +20,7 @@ const createUser = Joi.object({
         .required(),
 
     role: Joi.string()
-        .valid('USER', 'ADMIN')
+        .valid('USER', 'MODERATOR' ,'ADMIN')
         .required(),
 
     country : Joi.string()
@@ -32,6 +32,32 @@ const createUser = Joi.object({
 });
 
 const updateUser =  Joi.object({
+    email: Joi.string()
+            .email()
+            .required(),
+
+    firstName: Joi.string()
+        .min(2)
+        .max(30)
+        .required(),
+
+    lastName: Joi.string()
+        .max(30)
+        .required(),
+
+    role: Joi.string()
+        .valid('USER', 'MODERATOR' , 'ADMIN')
+        .required(),
+
+    country : Joi.string()
+            .required(),
+
+    city : Joi.string()
+        .required()
+
+});
+
+const patchUser =  Joi.object({
     firstName: Joi.string()
         .min(2)
         .max(30)
@@ -52,5 +78,6 @@ const updateUser =  Joi.object({
 
 module.exports = {
     createUser,
-    updateUser
+    updateUser,
+    patchUser
 }
