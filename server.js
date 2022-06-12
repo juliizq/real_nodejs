@@ -4,6 +4,7 @@ const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
 const cookieParser = require('cookie-parser');
 const verifyJWT = require('./middleware/verifyJWT');
+const morgan = require('morgan');
 
 require("dotenv").config();
 
@@ -14,29 +15,30 @@ app.use(cors(corsOptions));
 // Middleware 
 app.use(express.json());
 
+app.use(morgan('tiny'));
+
 
 // Import the routes 
 const userRoute = require('./routes/user.routes');
-const reviewRoute = require('./routes/review.routes')
+const reviewRoute = require('./routes/review.routes');
+const categorywRoute = require('./routes/category.routes');
+const productRoute = require('./routes/products.routes');
 const authRoute = require('./routes/auth.routes');
-const refreshTokenRoute = require('./routes/refresh.routes');
-const logoutRoute = require('./routes/logout.routes');
-const registerRoute = require('./routes/register.routes')
 
 
 
 //Middleware for cookies
 app.use(cookieParser());
 
+const prefix = '/api'
 // Routes middleware 
-app.use('/register', registerRoute)
-app.use('/api/auth', authRoute);
-app.use('/refresh', refreshTokenRoute);
-app.use('/logout', logoutRoute);
-app.use('/api/reviews', reviewRoute);
+app.use( prefix + '/auth', authRoute);
+app.use( prefix + '/reviews', reviewRoute);
+app.use( prefix + '/categories', categorywRoute);
+app.use( prefix + '/products', productRoute);
 
 app.use(verifyJWT);
-app.use('/api/users', userRoute);
+app.use( prefix + '/users', userRoute);
 
 
 require('./models');
