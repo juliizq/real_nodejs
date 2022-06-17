@@ -2,6 +2,7 @@ const db = require('../models');
 const { getPagination, getPagingData } = require('../utils/pagination');
 const { buildWhere } = require('../utils/query');
 const { createReview, getReviews } = require('../validations/review.validation');
+const sequelize = require('sequelize');
 
 module.exports = {
     
@@ -18,33 +19,69 @@ module.exports = {
             // Get correct limit/offset
             const { offset, limit } = getPagination(page, size);
             
-            const include = { model : db.Product };
+            const includeProduct = { model : db.Product };
             
             // Filters in nested model Product
             if(filters.categoryId){
-                include.where = { categoryId : filters.categoryId }
+                includeProduct.where = { categoryId : filters.categoryId }
                 delete filters.categoryId;
             }
 
+    
             const where = buildWhere(filters);
 
             // Get total
-            const total = await await db.Review.findAndCountAll({ where, include });
+            const total = await await db.Review.findAndCountAll({ where, include: includeProduct });
 
+            // const includeUser = { 
+            //     model : db.User,
+            //     attributes: {
+            //         include: [[sequelize.fn("COUNT", sequelize.col("Review.id")), "totalReview"]] 
+            //     },
+            //     include: [{
+            //         model: db.Review, attributes: []
+            //     }],
+            //     group: [sequelize.col('User.id')]
+            // };
+
+            const includeUser = { 
+                model : db.User,
+                // attributes: {
+                //     include: [[sequelize.fn("COUNT", sequelize.col("Review.id")), "totalReview"]] 
+                // },
+                // include: [{
+                //     model: db.Review, attributes: []
+                // }],
+                // required: true
+            };
+            
             // Get items paginate
             const { rows : reviews } = await db.Review.findAndCountAll({
                 where,
                 offset,
                 limit,
-                include,
+                include : [includeProduct, includeUser],
                 order: [ ['id', 'DESC'] ],
             });
+
+            for(const review of reviews){
+              const totalReview = await db.Review.count({ where : { UserId : review.UserId}});
+              review.User.dataValues.totalReview = totalReview;
+            }
+
+            // Get items paginate
+            // const { rows : reviews } = await db.Review.findAndCountAll({
+            //     where,
+            //     offset,
+            //     limit,
+            //     include : [includeProduct, includeUser],
+            //     order: [ ['id', 'DESC'] ],
+            // });
 
             // Get pagination
             const { totalItems, totalPages, currentPage } = getPagingData(total, page, size);
       
             return res.status(200).json({ totalItems, totalPages, currentPage , reviews });
-
         }catch(error){
             console.log('error:', error);
             if(error.status){
