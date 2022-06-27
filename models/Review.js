@@ -8,10 +8,34 @@ module.exports = (sequelize, Sequelize) => {
         //     type : Sequelize.???,
         //     allowNull : false
         // },
-        rating :  {
+        ratingGlobally :  {
             type : Sequelize.INTEGER,
             allowNull : false
         }, 
+        ratingRealToSize :  {
+            type : Sequelize.INTEGER,
+            allowNull : false
+        }, 
+        ratingConfort :  {
+            type : Sequelize.INTEGER,
+            allowNull : false
+        }, 
+        ratingQuality :  {
+            type : Sequelize.INTEGER,
+            allowNull : false
+        }, 
+        size : {
+            type: Sequelize.ENUM(
+                'XXS',
+                'XS',
+                'S',
+                'M',
+                'L',
+                'XL',
+                'XXL',
+                'XXXL'
+            )
+        },
         weight : {
             type : Sequelize.INTEGER,
             allowNull : false
