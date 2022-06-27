@@ -114,7 +114,11 @@ module.exports = {
 
         const review = {
             comment : req.body.comment,
-            rating : req.body.rating,
+            ratingGlobally : req.body.ratingGlobally,
+            ratingRealToSize : req.body.ratingRealToSize,
+            ratingConfort : req.body.ratingConfort,
+            ratingQuality : req.body.ratingQuality,
+            size : req.body.size,
             weight : req.body.weight,
             height : req.body.height
         }
