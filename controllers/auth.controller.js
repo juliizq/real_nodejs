@@ -3,7 +3,8 @@ const { object } = require('joi');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const db = require('../models');
-const { loginValidation } = require('../validations/auth.validations');
+const { loginValidation, registerValidation } = require('../validations/auth.validations');
+const saltRound  = +process.env.SALT_ROUND || 10;
 
 require('dotenv').config();
 
@@ -155,13 +156,13 @@ module.exports = {
 
             const validation = registerValidation.validate(req.body);
             if(validation.error){
-                return res.sendStatus(400).json(validation.error)
+                return res.status(400).json(validation.error)
             }
 
             const exist = await db.User.findOne({ where : { email : req.body.email}})
 
             if(exist){
-                return res.sendStatus(400).json({ error : 'Email already exist!'})
+                return res.status(400).json({ error : 'Email already exist!'})
             }
             
             const salt = bcrypt.genSaltSync(saltRound);
@@ -171,16 +172,39 @@ module.exports = {
                 password : hash,
                 firstName : req.body.firstName,
                 lastName : req.body.lastName,
-                role : req.body.role,
-                country : req.body.country,
-                city : req.body.city
+                role : req.body.role
             };
-    
+
             const savedUser =  await db.User.create(user);
-            res.json(savedUser);
+            
+
+            const accessToken = jwt.sign(
+                {
+                    'UserInfo': {
+                        'userId': user.id,
+                        'firstName': user.firstName,
+                        'role': user.role
+                    }
+                },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: '10m' }
+            );
+
+            const refreshToken = jwt.sign(
+                { userId : user.id, firstName: user.firstName }, 
+                process.env.REFRESH_TOKEN_SECRET,
+                {expiresIn : '1d'}
+            );
+
+            await db.User.update({refreshToken}, {where : {id : savedUser.id}});
+
+            res.cookie('jwt', refreshToken, {httpOnly : true, maxAge : 24 * 60 * 60 * 1000});
+    
+            res.json({user, accessToken});
 
         }catch (err){
-            res.sendStatus(500).json(err)
+            console.log('err:', err)
+            res.status(500).json(err)
         }
     }
 }
