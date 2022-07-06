@@ -27,14 +27,6 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             defaultValue : 'USER'
         },
-        country : {
-            type : Sequelize.STRING,
-            allowNull : false
-        },
-        city : {
-            type : Sequelize.STRING,
-            allowNull : false
-        },
         refreshToken : {
             type : Sequelize.TEXT,
             allowNull : true

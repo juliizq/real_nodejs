@@ -21,12 +21,6 @@ const createUser = Joi.object({
 
     role: Joi.string()
         .valid('USER', 'MODERATOR' ,'ADMIN')
-        .required(),
-
-    country : Joi.string()
-            .required(),
-
-    city : Joi.string()
         .required()
 
 });
@@ -47,12 +41,6 @@ const updateUser =  Joi.object({
 
     role: Joi.string()
         .valid('USER', 'MODERATOR' , 'ADMIN')
-        .required(),
-
-    country : Joi.string()
-            .required(),
-
-    city : Joi.string()
         .required()
 
 });
@@ -65,14 +53,7 @@ const patchUser =  Joi.object({
 
     lastName: Joi.string()
         .max(30)
-        .required(),
-
-    country : Joi.string()
-            .required(),
-
-    city : Joi.string()
         .required()
-
 });
     
 

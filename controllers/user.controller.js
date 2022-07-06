@@ -38,9 +38,7 @@ module.exports = {
                 password : hash,
                 firstName : req.body.firstName,
                 lastName : req.body.lastName,
-                role : req.body.role,
-                country : req.body.country,
-                city : req.body.city
+                role : req.body.role
             };
 
     

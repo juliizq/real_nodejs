@@ -19,11 +19,6 @@ const registerValidation = Joi.object({
             .max(30)
             .required(),
 
-    country : Joi.string()
-            .required(),
-
-    city : Joi.string()
-            .required()
 });
 
 const loginValidation = Joi.object({
